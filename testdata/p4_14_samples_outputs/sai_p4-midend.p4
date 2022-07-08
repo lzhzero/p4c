@@ -135,7 +135,7 @@ struct headers {
 }
 
 parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
-    state parse_eth {
+    @name(".parse_eth") state parse_eth {
         packet.extract<ethernet_t>(hdr.eth);
         transition select(hdr.eth.ethType) {
             16w0x8100: parse_vlan;
@@ -143,15 +143,15 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_ipv4 {
+    @name(".parse_ipv4") state parse_ipv4 {
         packet.extract<ipv4_t>(hdr.ipv4);
         transition accept;
     }
-    state parse_vlan {
+    @name(".parse_vlan") state parse_vlan {
         packet.extract<vlan_t>(hdr.vlan);
         transition accept;
     }
-    state start {
+    @name(".start") state start {
         transition parse_eth;
     }
 }

@@ -41,14 +41,14 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
         verify(false, error.NoMatch);
         transition reject;
     }
-    state parse_vlan {
+    @name(".parse_vlan") state parse_vlan {
         packet.extract<vlan_tag_t>(hdr.vlan_tag_[0]);
         transition select(hdr.vlan_tag_[0].etherType) {
             16w0x800: accept;
             default: noMatch;
         }
     }
-    state start {
+    @name(".start") state start {
         packet.extract<ethernet_t>(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
             default: parse_vlan;

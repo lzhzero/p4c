@@ -31,28 +31,28 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
         verify(false, error.StackOutOfBounds);
         transition reject;
     }
-    state extra {
+    @name(".extra") state extra {
         packet.extract<extra_t>(hdr.extra[32w0]);
         transition select(hdr.extra[32w0].b2) {
             8w0x80 &&& 8w0x80: extra1;
             default: accept;
         }
     }
-    state extra1 {
+    @name(".extra") state extra1 {
         packet.extract<extra_t>(hdr.extra[32w1]);
         transition select(hdr.extra[32w1].b2) {
             8w0x80 &&& 8w0x80: extra2;
             default: accept;
         }
     }
-    state extra2 {
+    @name(".extra") state extra2 {
         packet.extract<extra_t>(hdr.extra[32w2]);
         transition select(hdr.extra[32w2].b2) {
             8w0x80 &&& 8w0x80: extra3;
             default: accept;
         }
     }
-    state extra3 {
+    @name(".extra") state extra3 {
         packet.extract<extra_t>(hdr.extra[32w3]);
         transition select(hdr.extra[32w3].b2) {
             8w0x80 &&& 8w0x80: extra4;
@@ -62,7 +62,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
     state extra4 {
         transition stateOutOfBound;
     }
-    state start {
+    @name(".start") state start {
         packet.extract<data_t>(hdr.data);
         transition extra;
     }

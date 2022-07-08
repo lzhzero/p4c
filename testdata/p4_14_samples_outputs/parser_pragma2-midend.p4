@@ -13,7 +13,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
         verify(false, error.NoMatch);
         transition reject;
     }
-    state start {
+    @name(".$start") state start {
         transition select((bit<32>)standard_metadata.instance_type) {
             32w0: start_0;
             32w1: start_e2e_mirrored;
@@ -21,14 +21,14 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state start_0 {
+    @name(".start") state start_0 {
         transition accept;
     }
-    state start_e2e_mirrored {
+    @packet_entry @name(".start_e2e_mirrored") state start_e2e_mirrored {
         packet.lookahead<bit<32>>();
         transition accept;
     }
-    state start_i2e_mirrored {
+    @packet_entry @name(".start_i2e_mirrored") state start_i2e_mirrored {
         transition accept;
     }
 }

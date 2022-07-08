@@ -26,11 +26,11 @@ struct headers {
 }
 
 parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
-    state p_hdr0 {
+    @name(".p_hdr0") state p_hdr0 {
         packet.extract<hdr0_t>(hdr.hdr0);
         transition accept;
     }
-    state start {
+    @name(".start") state start {
         transition p_hdr0;
     }
 }

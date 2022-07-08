@@ -20,14 +20,14 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
         verify(false, error.NoMatch);
         transition reject;
     }
-    state parse_extirpations {
+    @name(".parse_extirpations") state parse_extirpations {
         packet.extract<inboxes>(hdr.extirpations);
         transition select(hdr.extirpations.khans) {
             16s1024: accept;
             default: noMatch;
         }
     }
-    state start {
+    @name(".start") state start {
         transition parse_extirpations;
     }
 }

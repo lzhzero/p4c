@@ -125,7 +125,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
         verify(false, error.NoMatch);
         transition reject;
     }
-    state parse_ethernet {
+    @name(".parse_ethernet") state parse_ethernet {
         packet.extract<ethernet_t>(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
             16w0x8100: parse_vlan;
@@ -137,15 +137,15 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_icmp {
+    @name(".parse_icmp") state parse_icmp {
         packet.extract<icmp_t>(hdr.icmp);
         transition accept;
     }
-    state parse_icmpv6 {
+    @name(".parse_icmpv6") state parse_icmpv6 {
         packet.extract<icmpv6_t>(hdr.icmpv6);
         transition accept;
     }
-    state parse_ipv4 {
+    @name(".parse_ipv4") state parse_ipv4 {
         packet.extract<ipv4_t>(hdr.ipv4);
         transition select(hdr.ipv4.fragOffset, hdr.ipv4.protocol) {
             (13w0, 8w1): parse_icmp;
@@ -154,7 +154,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_ipv6 {
+    @name(".parse_ipv6") state parse_ipv6 {
         packet.extract<ipv6_t>(hdr.ipv6);
         transition select(hdr.ipv6.nextHdr) {
             8w58: parse_icmpv6;
@@ -163,15 +163,15 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_tcp {
+    @name(".parse_tcp") state parse_tcp {
         packet.extract<tcp_t>(hdr.tcp);
         transition accept;
     }
-    state parse_udp {
+    @name(".parse_udp") state parse_udp {
         packet.extract<udp_t>(hdr.udp);
         transition accept;
     }
-    state parse_vlan {
+    @name(".parse_vlan") state parse_vlan {
         packet.extract<vlan_tag_t>(hdr.vlan_tag_[32w0]);
         transition select(hdr.vlan_tag_[32w0].etherType) {
             16w0x8100: parse_vlan1;
@@ -183,7 +183,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_vlan1 {
+    @name(".parse_vlan") state parse_vlan1 {
         packet.extract<vlan_tag_t>(hdr.vlan_tag_[32w1]);
         transition select(hdr.vlan_tag_[32w1].etherType) {
             16w0x8100: parse_vlan2;
@@ -195,7 +195,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_vlan2 {
+    @name(".parse_vlan") state parse_vlan2 {
         packet.extract<vlan_tag_t>(hdr.vlan_tag_[32w2]);
         transition select(hdr.vlan_tag_[32w2].etherType) {
             16w0x8100: parse_vlan3;
@@ -207,7 +207,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_vlan3 {
+    @name(".parse_vlan") state parse_vlan3 {
         packet.extract<vlan_tag_t>(hdr.vlan_tag_[32w3]);
         transition select(hdr.vlan_tag_[32w3].etherType) {
             16w0x8100: parse_vlan4;
@@ -222,7 +222,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
     state parse_vlan4 {
         transition stateOutOfBound;
     }
-    state start {
+    @name(".start") state start {
         meta._routing_metadata_drop0 = 1w0;
         transition parse_ethernet;
     }

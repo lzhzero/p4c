@@ -39,15 +39,15 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
         verify(false, error.NoMatch);
         transition reject;
     }
-    state parseA {
+    @name(".parseA") state parseA {
         packet.extract<A_t_0>(hdr.hdrA);
         transition accept;
     }
-    state parseB {
+    @name(".parseB") state parseB {
         packet.extract<B_t_0>(hdr.hdrB);
         transition accept;
     }
-    state start {
+    @name(".start") state start {
         packet.extract<type_t>(hdr.packet_type);
         transition select(hdr.packet_type.type) {
             16w0xa &&& 16w0xf: parseA;

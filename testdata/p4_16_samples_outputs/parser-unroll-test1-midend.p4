@@ -41,9 +41,6 @@ struct headers {
 
 parser MyParser(packet_in packet, out headers hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
     @name("MyParser.index") int<32> index_0;
-<<<<<<< main
-    @name(".start") state start {
-=======
     state stateOutOfBound {
         verify(false, error.StackOutOfBounds);
         transition reject;
@@ -79,8 +76,7 @@ parser MyParser(packet_in packet, out headers hdr, inout metadata meta, inout st
     state parse_srcRouting3 {
         transition stateOutOfBound;
     }
-    state start {
->>>>>>> Enable loopsunrolling by default.
+    @name(".start") state start {
         index_0 = 32s0;
         packet.extract<ethernet_t>(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {

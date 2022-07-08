@@ -31,19 +31,19 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
         verify(false, error.NoMatch);
         transition reject;
     }
-    state parse_1bytes {
+    @name(".parse_1bytes") state parse_1bytes {
         packet.extract<byte_hdr_t>(hdr.byte_hdr[0]);
         transition accept;
     }
-    state parse_2bytes {
+    @name(".parse_2bytes") state parse_2bytes {
         packet.extract<byte_hdr_t>(hdr.byte_hdr[1]);
         transition accept;
     }
-    state parse_3bytes {
+    @name(".parse_3bytes") state parse_3bytes {
         packet.extract<byte_hdr_t>(hdr.byte_hdr[2]);
         transition accept;
     }
-    state start {
+    @name(".start") state start {
         packet.extract<hdr1_t>(hdr.hdr1);
         packet.extract<hdr2_t>(hdr.hdr2);
         transition select(hdr.hdr1.totalLen) {

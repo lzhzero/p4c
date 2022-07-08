@@ -943,26 +943,26 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
         verify(false, error.NoMatch);
         transition reject;
     }
-    state parse_arp_rarp {
+    @name(".parse_arp_rarp") state parse_arp_rarp {
         packet.extract<arp_rarp_t>(hdr.arp_rarp);
         transition select(hdr.arp_rarp.protoType) {
             16w0x800: parse_arp_rarp_ipv4;
             default: accept;
         }
     }
-    state parse_arp_rarp_ipv4 {
+    @name(".parse_arp_rarp_ipv4") state parse_arp_rarp_ipv4 {
         packet.extract<arp_rarp_ipv4_t>(hdr.arp_rarp_ipv4);
         transition parse_set_prio_med;
     }
-    state parse_eompls {
+    @name(".parse_eompls") state parse_eompls {
         meta._tunnel_metadata_ingress_tunnel_type137 = 5w6;
         transition parse_inner_ethernet;
     }
-    state parse_erspan_t3 {
+    @name(".parse_erspan_t3") state parse_erspan_t3 {
         packet.extract<erspan_header_t3_t_0>(hdr.erspan_t3_header);
         transition parse_inner_ethernet;
     }
-    state parse_ethernet {
+    @name(".parse_ethernet") state parse_ethernet {
         packet.extract<ethernet_t>(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
             16w0 &&& 16w0xfe00: parse_llc_header;
@@ -979,7 +979,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_fabric_header {
+    @name(".parse_fabric_header") state parse_fabric_header {
         packet.extract<fabric_header_t>(hdr.fabric_header);
         transition select(hdr.fabric_header.packetType) {
             3w1: parse_fabric_header_unicast;
@@ -989,7 +989,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_fabric_header_cpu {
+    @name(".parse_fabric_header_cpu") state parse_fabric_header_cpu {
         packet.extract<fabric_header_cpu_t>(hdr.fabric_header_cpu);
         meta._ingress_metadata_bypass_lookups46 = hdr.fabric_header_cpu.reasonCode;
         transition select(hdr.fabric_header_cpu.reasonCode) {
@@ -997,19 +997,19 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: parse_fabric_payload_header;
         }
     }
-    state parse_fabric_header_mirror {
+    @name(".parse_fabric_header_mirror") state parse_fabric_header_mirror {
         packet.extract<fabric_header_mirror_t>(hdr.fabric_header_mirror);
         transition parse_fabric_payload_header;
     }
-    state parse_fabric_header_multicast {
+    @name(".parse_fabric_header_multicast") state parse_fabric_header_multicast {
         packet.extract<fabric_header_multicast_t>(hdr.fabric_header_multicast);
         transition parse_fabric_payload_header;
     }
-    state parse_fabric_header_unicast {
+    @name(".parse_fabric_header_unicast") state parse_fabric_header_unicast {
         packet.extract<fabric_header_unicast_t>(hdr.fabric_header_unicast);
         transition parse_fabric_payload_header;
     }
-    state parse_fabric_payload_header {
+    @name(".parse_fabric_payload_header") state parse_fabric_payload_header {
         packet.extract<fabric_payload_header_t>(hdr.fabric_payload_header);
         transition select(hdr.fabric_payload_header.etherType) {
             16w0 &&& 16w0xfe00: parse_llc_header;
@@ -1025,11 +1025,11 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_fabric_sflow_header {
+    @name(".parse_fabric_sflow_header") state parse_fabric_sflow_header {
         packet.extract<fabric_header_sflow_t>(hdr.fabric_header_sflow);
         transition parse_fabric_payload_header;
     }
-    state parse_geneve {
+    @name(".parse_geneve") state parse_geneve {
         packet.extract<genv_t>(hdr.genv);
         meta._tunnel_metadata_tunnel_vni138 = hdr.genv.vni;
         meta._tunnel_metadata_ingress_tunnel_type137 = 5w4;
@@ -1040,12 +1040,12 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_gpe_int_header {
+    @name(".parse_gpe_int_header") state parse_gpe_int_header {
         packet.extract<vxlan_gpe_int_header_t>(hdr.vxlan_gpe_int_header);
         meta._int_metadata_gpe_int_hdr_len51 = (bit<16>)hdr.vxlan_gpe_int_header.len;
         transition parse_int_header;
     }
-    state parse_gre {
+    @name(".parse_gre") state parse_gre {
         packet.extract<gre_t>(hdr.gre);
         transition select(hdr.gre.C, hdr.gre.R, hdr.gre.K, hdr.gre.S, hdr.gre.s, hdr.gre.recurse, hdr.gre.flags, hdr.gre.ver, hdr.gre.proto) {
             (1w0x0, 1w0x0, 1w0x1, 1w0x0, 1w0x0, 3w0x0, 5w0x0, 3w0x0, 16w0x6558): parse_nvgre;
@@ -1055,15 +1055,15 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_gre_ipv4 {
+    @name(".parse_gre_ipv4") state parse_gre_ipv4 {
         meta._tunnel_metadata_ingress_tunnel_type137 = 5w2;
         transition parse_inner_ipv4;
     }
-    state parse_gre_ipv6 {
+    @name(".parse_gre_ipv6") state parse_gre_ipv6 {
         meta._tunnel_metadata_ingress_tunnel_type137 = 5w2;
         transition parse_inner_ipv6;
     }
-    state parse_icmp {
+    @name(".parse_icmp") state parse_icmp {
         packet.extract<icmp_t>(hdr.icmp);
         meta._l3_metadata_lkp_outer_l4_sport87 = hdr.icmp.typeCode;
         transition select(hdr.icmp.typeCode) {
@@ -1073,7 +1073,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_inner_ethernet {
+    @name(".parse_inner_ethernet") state parse_inner_ethernet {
         packet.extract<ethernet_t>(hdr.inner_ethernet);
         meta._l2_metadata_lkp_mac_sa65 = hdr.inner_ethernet.srcAddr;
         meta._l2_metadata_lkp_mac_da66 = hdr.inner_ethernet.dstAddr;
@@ -1083,12 +1083,12 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_inner_icmp {
+    @name(".parse_inner_icmp") state parse_inner_icmp {
         packet.extract<icmp_t>(hdr.inner_icmp);
         meta._l3_metadata_lkp_l4_sport85 = hdr.inner_icmp.typeCode;
         transition accept;
     }
-    state parse_inner_ipv4 {
+    @name(".parse_inner_ipv4") state parse_inner_ipv4 {
         packet.extract<ipv4_t>(hdr.inner_ipv4);
         meta._ipv4_metadata_lkp_ipv4_sa56 = hdr.inner_ipv4.srcAddr;
         meta._ipv4_metadata_lkp_ipv4_da57 = hdr.inner_ipv4.dstAddr;
@@ -1101,7 +1101,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_inner_ipv6 {
+    @name(".parse_inner_ipv6") state parse_inner_ipv6 {
         packet.extract<ipv6_t>(hdr.inner_ipv6);
         meta._ipv6_metadata_lkp_ipv6_sa60 = hdr.inner_ipv6.srcAddr;
         meta._ipv6_metadata_lkp_ipv6_da61 = hdr.inner_ipv6.dstAddr;
@@ -1114,19 +1114,19 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_inner_tcp {
+    @name(".parse_inner_tcp") state parse_inner_tcp {
         packet.extract<tcp_t>(hdr.inner_tcp);
         meta._l3_metadata_lkp_l4_sport85 = hdr.inner_tcp.srcPort;
         meta._l3_metadata_lkp_l4_dport86 = hdr.inner_tcp.dstPort;
         transition accept;
     }
-    state parse_inner_udp {
+    @name(".parse_inner_udp") state parse_inner_udp {
         packet.extract<udp_t>(hdr.inner_udp);
         meta._l3_metadata_lkp_l4_sport85 = hdr.inner_udp.srcPort;
         meta._l3_metadata_lkp_l4_dport86 = hdr.inner_udp.dstPort;
         transition accept;
     }
-    state parse_int_header {
+    @name(".parse_int_header") state parse_int_header {
         packet.extract<int_header_t>(hdr.int_header);
         meta._int_metadata_instruction_cnt53 = (bit<16>)hdr.int_header.ins_cnt;
         transition select(hdr.int_header.rsvd1, hdr.int_header.total_hop_cnt) {
@@ -1135,7 +1135,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_int_val {
+    @name(".parse_int_val") state parse_int_val {
         packet.extract<int_value_t>(hdr.int_val[32w0]);
         transition select(hdr.int_val[32w0].bos) {
             1w0: parse_int_val1;
@@ -1143,7 +1143,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val1 {
+    @name(".parse_int_val") state parse_int_val1 {
         packet.extract<int_value_t>(hdr.int_val[32w1]);
         transition select(hdr.int_val[32w1].bos) {
             1w0: parse_int_val2;
@@ -1151,7 +1151,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val2 {
+    @name(".parse_int_val") state parse_int_val2 {
         packet.extract<int_value_t>(hdr.int_val[32w2]);
         transition select(hdr.int_val[32w2].bos) {
             1w0: parse_int_val3;
@@ -1159,7 +1159,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val3 {
+    @name(".parse_int_val") state parse_int_val3 {
         packet.extract<int_value_t>(hdr.int_val[32w3]);
         transition select(hdr.int_val[32w3].bos) {
             1w0: parse_int_val4;
@@ -1167,7 +1167,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val4 {
+    @name(".parse_int_val") state parse_int_val4 {
         packet.extract<int_value_t>(hdr.int_val[32w4]);
         transition select(hdr.int_val[32w4].bos) {
             1w0: parse_int_val5;
@@ -1175,7 +1175,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val5 {
+    @name(".parse_int_val") state parse_int_val5 {
         packet.extract<int_value_t>(hdr.int_val[32w5]);
         transition select(hdr.int_val[32w5].bos) {
             1w0: parse_int_val6;
@@ -1183,7 +1183,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val6 {
+    @name(".parse_int_val") state parse_int_val6 {
         packet.extract<int_value_t>(hdr.int_val[32w6]);
         transition select(hdr.int_val[32w6].bos) {
             1w0: parse_int_val7;
@@ -1191,7 +1191,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val7 {
+    @name(".parse_int_val") state parse_int_val7 {
         packet.extract<int_value_t>(hdr.int_val[32w7]);
         transition select(hdr.int_val[32w7].bos) {
             1w0: parse_int_val8;
@@ -1199,7 +1199,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val8 {
+    @name(".parse_int_val") state parse_int_val8 {
         packet.extract<int_value_t>(hdr.int_val[32w8]);
         transition select(hdr.int_val[32w8].bos) {
             1w0: parse_int_val9;
@@ -1207,7 +1207,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val9 {
+    @name(".parse_int_val") state parse_int_val9 {
         packet.extract<int_value_t>(hdr.int_val[32w9]);
         transition select(hdr.int_val[32w9].bos) {
             1w0: parse_int_val10;
@@ -1215,7 +1215,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val10 {
+    @name(".parse_int_val") state parse_int_val10 {
         packet.extract<int_value_t>(hdr.int_val[32w10]);
         transition select(hdr.int_val[32w10].bos) {
             1w0: parse_int_val11;
@@ -1223,7 +1223,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val11 {
+    @name(".parse_int_val") state parse_int_val11 {
         packet.extract<int_value_t>(hdr.int_val[32w11]);
         transition select(hdr.int_val[32w11].bos) {
             1w0: parse_int_val12;
@@ -1231,7 +1231,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val12 {
+    @name(".parse_int_val") state parse_int_val12 {
         packet.extract<int_value_t>(hdr.int_val[32w12]);
         transition select(hdr.int_val[32w12].bos) {
             1w0: parse_int_val13;
@@ -1239,7 +1239,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val13 {
+    @name(".parse_int_val") state parse_int_val13 {
         packet.extract<int_value_t>(hdr.int_val[32w13]);
         transition select(hdr.int_val[32w13].bos) {
             1w0: parse_int_val14;
@@ -1247,7 +1247,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val14 {
+    @name(".parse_int_val") state parse_int_val14 {
         packet.extract<int_value_t>(hdr.int_val[32w14]);
         transition select(hdr.int_val[32w14].bos) {
             1w0: parse_int_val15;
@@ -1255,7 +1255,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val15 {
+    @name(".parse_int_val") state parse_int_val15 {
         packet.extract<int_value_t>(hdr.int_val[32w15]);
         transition select(hdr.int_val[32w15].bos) {
             1w0: parse_int_val16;
@@ -1263,7 +1263,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val16 {
+    @name(".parse_int_val") state parse_int_val16 {
         packet.extract<int_value_t>(hdr.int_val[32w16]);
         transition select(hdr.int_val[32w16].bos) {
             1w0: parse_int_val17;
@@ -1271,7 +1271,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val17 {
+    @name(".parse_int_val") state parse_int_val17 {
         packet.extract<int_value_t>(hdr.int_val[32w17]);
         transition select(hdr.int_val[32w17].bos) {
             1w0: parse_int_val18;
@@ -1279,7 +1279,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val18 {
+    @name(".parse_int_val") state parse_int_val18 {
         packet.extract<int_value_t>(hdr.int_val[32w18]);
         transition select(hdr.int_val[32w18].bos) {
             1w0: parse_int_val19;
@@ -1287,7 +1287,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val19 {
+    @name(".parse_int_val") state parse_int_val19 {
         packet.extract<int_value_t>(hdr.int_val[32w19]);
         transition select(hdr.int_val[32w19].bos) {
             1w0: parse_int_val20;
@@ -1295,7 +1295,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val20 {
+    @name(".parse_int_val") state parse_int_val20 {
         packet.extract<int_value_t>(hdr.int_val[32w20]);
         transition select(hdr.int_val[32w20].bos) {
             1w0: parse_int_val21;
@@ -1303,7 +1303,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val21 {
+    @name(".parse_int_val") state parse_int_val21 {
         packet.extract<int_value_t>(hdr.int_val[32w21]);
         transition select(hdr.int_val[32w21].bos) {
             1w0: parse_int_val22;
@@ -1311,7 +1311,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val22 {
+    @name(".parse_int_val") state parse_int_val22 {
         packet.extract<int_value_t>(hdr.int_val[32w22]);
         transition select(hdr.int_val[32w22].bos) {
             1w0: parse_int_val23;
@@ -1319,7 +1319,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: noMatch;
         }
     }
-    state parse_int_val23 {
+    @name(".parse_int_val") state parse_int_val23 {
         packet.extract<int_value_t>(hdr.int_val[32w23]);
         transition select(hdr.int_val[32w23].bos) {
             1w0: parse_int_val24;
@@ -1330,7 +1330,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
     state parse_int_val24 {
         transition stateOutOfBound;
     }
-    state parse_ipv4 {
+    @name(".parse_ipv4") state parse_ipv4 {
         packet.extract<ipv4_t>(hdr.ipv4);
         transition select(hdr.ipv4.fragOffset, hdr.ipv4.ihl, hdr.ipv4.protocol) {
             (13w0x0, 4w0x5, 8w0x1): parse_icmp;
@@ -1347,11 +1347,11 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_ipv4_in_ip {
+    @name(".parse_ipv4_in_ip") state parse_ipv4_in_ip {
         meta._tunnel_metadata_ingress_tunnel_type137 = 5w3;
         transition parse_inner_ipv4;
     }
-    state parse_ipv6 {
+    @name(".parse_ipv6") state parse_ipv6 {
         packet.extract<ipv6_t>(hdr.ipv6);
         transition select(hdr.ipv6.nextHdr) {
             8w58: parse_icmp;
@@ -1367,11 +1367,11 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_ipv6_in_ip {
+    @name(".parse_ipv6_in_ip") state parse_ipv6_in_ip {
         meta._tunnel_metadata_ingress_tunnel_type137 = 5w3;
         transition parse_inner_ipv6;
     }
-    state parse_llc_header {
+    @name(".parse_llc_header") state parse_llc_header {
         packet.extract<llc_header_t>(hdr.llc_header);
         transition select(hdr.llc_header.dsap, hdr.llc_header.ssap) {
             (8w0xaa, 8w0xaa): parse_snap_header;
@@ -1379,7 +1379,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_mpls {
+    @name(".parse_mpls") state parse_mpls {
         packet.extract<mpls_t>(hdr.mpls[32w0]);
         transition select(hdr.mpls[32w0].bos) {
             1w0: parse_mpls1;
@@ -1387,7 +1387,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_mpls1 {
+    @name(".parse_mpls") state parse_mpls1 {
         packet.extract<mpls_t>(hdr.mpls[32w1]);
         transition select(hdr.mpls[32w1].bos) {
             1w0: parse_mpls2;
@@ -1395,7 +1395,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_mpls2 {
+    @name(".parse_mpls") state parse_mpls2 {
         packet.extract<mpls_t>(hdr.mpls[32w2]);
         transition select(hdr.mpls[32w2].bos) {
             1w0: parse_mpls3;
@@ -1406,7 +1406,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
     state parse_mpls3 {
         transition stateOutOfBound;
     }
-    state parse_mpls_bos {
+    @name(".parse_mpls_bos") state parse_mpls_bos {
         tmp_0 = packet.lookahead<bit<4>>();
         transition select(tmp_0) {
             4w0x4: parse_mpls_inner_ipv4;
@@ -1414,28 +1414,28 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: parse_eompls;
         }
     }
-    state parse_mpls_inner_ipv4 {
+    @name(".parse_mpls_inner_ipv4") state parse_mpls_inner_ipv4 {
         meta._tunnel_metadata_ingress_tunnel_type137 = 5w9;
         transition parse_inner_ipv4;
     }
-    state parse_mpls_inner_ipv6 {
+    @name(".parse_mpls_inner_ipv6") state parse_mpls_inner_ipv6 {
         meta._tunnel_metadata_ingress_tunnel_type137 = 5w9;
         transition parse_inner_ipv6;
     }
-    state parse_nvgre {
+    @name(".parse_nvgre") state parse_nvgre {
         packet.extract<nvgre_t>(hdr.nvgre);
         meta._tunnel_metadata_ingress_tunnel_type137 = 5w5;
         meta._tunnel_metadata_tunnel_vni138 = hdr.nvgre.tni;
         transition parse_inner_ethernet;
     }
-    state parse_qinq {
+    @name(".parse_qinq") state parse_qinq {
         packet.extract<vlan_tag_t>(hdr.vlan_tag_[0]);
         transition select(hdr.vlan_tag_[0].etherType) {
             16w0x8100: parse_qinq_vlan;
             default: accept;
         }
     }
-    state parse_qinq_vlan {
+    @name(".parse_qinq_vlan") state parse_qinq_vlan {
         packet.extract<vlan_tag_t>(hdr.vlan_tag_[1]);
         transition select(hdr.vlan_tag_[1].etherType) {
             16w0x8847: parse_mpls;
@@ -1447,19 +1447,19 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_set_prio_high {
+    @name(".parse_set_prio_high") state parse_set_prio_high {
         standard_metadata.priority = 3w5;
         transition accept;
     }
-    state parse_set_prio_med {
+    @name(".parse_set_prio_med") state parse_set_prio_med {
         standard_metadata.priority = 3w3;
         transition accept;
     }
-    state parse_sflow {
+    @name(".parse_sflow") state parse_sflow {
         packet.extract<sflow_hdr_t>(hdr.sflow);
         transition accept;
     }
-    state parse_snap_header {
+    @name(".parse_snap_header") state parse_snap_header {
         packet.extract<snap_header_t>(hdr.snap_header);
         transition select(hdr.snap_header.type_) {
             16w0x8100: parse_vlan;
@@ -1473,7 +1473,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_tcp {
+    @name(".parse_tcp") state parse_tcp {
         packet.extract<tcp_t>(hdr.tcp);
         meta._l3_metadata_lkp_outer_l4_sport87 = hdr.tcp.srcPort;
         meta._l3_metadata_lkp_outer_l4_dport88 = hdr.tcp.dstPort;
@@ -1483,7 +1483,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_udp {
+    @name(".parse_udp") state parse_udp {
         packet.extract<udp_t>(hdr.udp);
         meta._l3_metadata_lkp_outer_l4_sport87 = hdr.udp.srcPort;
         meta._l3_metadata_lkp_outer_l4_dport88 = hdr.udp.dstPort;
@@ -1502,7 +1502,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_vlan {
+    @name(".parse_vlan") state parse_vlan {
         packet.extract<vlan_tag_t>(hdr.vlan_tag_[0]);
         transition select(hdr.vlan_tag_[0].etherType) {
             16w0x8847: parse_mpls;
@@ -1514,13 +1514,13 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: accept;
         }
     }
-    state parse_vxlan {
+    @name(".parse_vxlan") state parse_vxlan {
         packet.extract<vxlan_t>(hdr.vxlan);
         meta._tunnel_metadata_ingress_tunnel_type137 = 5w1;
         meta._tunnel_metadata_tunnel_vni138 = hdr.vxlan.vni;
         transition parse_inner_ethernet;
     }
-    state parse_vxlan_gpe {
+    @name(".parse_vxlan_gpe") state parse_vxlan_gpe {
         packet.extract<vxlan_gpe_t>(hdr.vxlan_gpe);
         meta._tunnel_metadata_ingress_tunnel_type137 = 5w12;
         meta._tunnel_metadata_tunnel_vni138 = hdr.vxlan_gpe.vni;
@@ -1529,7 +1529,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
             default: parse_inner_ethernet;
         }
     }
-    state start {
+    @name(".start") state start {
         transition parse_ethernet;
     }
 }
